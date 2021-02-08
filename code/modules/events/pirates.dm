@@ -5,7 +5,7 @@
 	max_occurrences = 1
 	min_players = 10
 	earliest_start = 30 MINUTES
-	gamemode_blacklist = list("nuclear","dynamic")
+	gamemode_blacklist = list("nuclear")
 
 /datum/round_event_control/pirates/preRunEvent()
 	if (!SSmapping.empty_space)
@@ -25,7 +25,7 @@
 	ship_name = pick(strings(PIRATE_NAMES_FILE, "ship_names"))
 
 /datum/round_event/pirates/announce(fake)
-	priority_announce("A report has been downloaded and printed out at all communications consoles.", "Incoming Classified Message", "commandreport") // CITADEL EDIT metabreak
+	priority_announce("A business proposition has been downloaded and printed out at all communication consoles.", "Incoming Business Proposition", "commandreport")
 	if(fake)
 		return
 	threat_message = new
@@ -49,6 +49,7 @@
 			else
 				priority_announce("Trying to cheat us? You'll regret this!",sender_override = ship_name)
 	if(!shuttle_spawned)
+		priority_announce("You won't listen to reason? Then we'll take what's yours or die trying!",sender_override = ship_name)
 		spawn_shuttle()
 
 /datum/round_event/pirates/start()
@@ -83,8 +84,7 @@
 				announce_to_ghosts(M)
 			else
 				announce_to_ghosts(spawner)
-
-	priority_announce("A report has been downloaded and printed out at all communications consoles.", "Incoming Classified Message", "commandreport") //CITADEL EDIT also metabreak here too
+	priority_announce("Unidentified ship detected near the station.")
 
 //Shuttle equipment
 
@@ -141,7 +141,7 @@
 	for(var/obj/machinery/rnd/server/S in GLOB.machines)
 		if(S.stat & (NOPOWER|BROKEN))
 			continue
-		S.emp_act(1)
+		S.emp_act(80)
 		new /obj/effect/temp_visual/emp(get_turf(S))
 
 /obj/machinery/shuttle_scrambler/proc/dump_loot(mob/user)
@@ -219,7 +219,7 @@
 	suit_type = /obj/item/clothing/suit/space
 	helmet_type = /obj/item/clothing/head/helmet/space
 	mask_type = /obj/item/clothing/mask/breath
-	storage_type = /obj/item/tank/internals/oxygen
+	storage_type = /obj/item/tank/jetpack/void
 
 
 /obj/machinery/loot_locator
@@ -275,6 +275,7 @@
 
 /obj/machinery/computer/piratepad_control
 	name = "cargo hold control terminal"
+	resistance_flags = INDESTRUCTIBLE
 	ui_x = 600
 	ui_y = 230
 	var/status_report = "Ready for delivery."

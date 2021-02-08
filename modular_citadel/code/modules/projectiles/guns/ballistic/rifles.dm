@@ -9,7 +9,7 @@
 	item_state = "arg"
 	slot_flags = 0
 	mag_type = /obj/item/ammo_box/magazine/m556	//Uses the m90gl's magazine, just like the NT-ARG
-	fire_sound = 'sound/weapons/gunshot_smg.ogg'
+	fire_sound = 'sound/weapons/rifleshot.ogg'
 	can_suppress = 0
 	burst_size = 6	//in line with XCOMEU stats. This can fire 5 bursts from a full magazine.
 	fire_delay = 1
@@ -148,18 +148,22 @@
 	slot_flags = 0
 	pin = /obj/item/firing_pin/implant/pindicate
 	mag_type = /obj/item/ammo_box/magazine/flechette
-	fire_sound = 'sound/weapons/gunshot_smg.ogg'
+	fire_sound = 'sound/weapons/rifleshot.ogg'
 	can_suppress = 0
 	burst_size = 5
 	fire_delay = 1
 	casing_ejector = 0
 	spread = 10
 	recoil = 0.05
+	automatic_burst_overlay = FALSE
+	var/magtype = "flechettegun"
 
-/obj/item/gun/ballistic/automatic/flechette/update_icon()
-	cut_overlays()
+/obj/item/gun/ballistic/automatic/flechette/update_overlays()
+	. = ..()
 	if(magazine)
-		add_overlay("flechettegun-magazine")
+		. += "[magtype]-magazine"
+
+/obj/item/gun/ballistic/automatic/flechette/update_icon_state()
 	icon_state = "[initial(icon_state)][chambered ? "" : "-e"]"
 
 ///unique variant///
@@ -185,12 +189,7 @@
 	w_class = WEIGHT_CLASS_SMALL
 	spread = 15
 	recoil = 0.1
-
-/obj/item/gun/ballistic/automatic/flechette/shredder/update_icon()
-	cut_overlays()
-	if(magazine)
-		add_overlay("shreddergun-magazine")
-	icon_state = "[initial(icon_state)][chambered ? "" : "-e"]"
+	magtype = "shreddergun"
 
 /*/////////////////////////////////////////////////////////////
 //////////////////////// Zero's Meme //////////////////////////
@@ -218,17 +217,19 @@
 	burst_size = 4	//Shh.
 	fire_delay = 1
 	var/body_color = "#3333aa"
+	automatic_burst_overlay = FALSE
 
-/obj/item/gun/ballistic/automatic/AM4B/update_icon()
-	..()
+/obj/item/gun/ballistic/automatic/AM4B/ComponentInitialize()
+	. = ..()
+	AddElement(/datum/element/update_icon_updates_onmob)
+
+/obj/item/gun/ballistic/automatic/AM4B/update_overlays()
+	. = ..()
 	var/mutable_appearance/body_overlay = mutable_appearance('modular_citadel/icons/obj/guns/cit_guns.dmi', "AM4-Body")
 	if(body_color)
 		body_overlay.color = body_color
-	cut_overlays()		//So that it doesn't keep stacking overlays non-stop on top of each other
-	add_overlay(body_overlay)
-	if(ismob(loc))
-		var/mob/M = loc
-		M.update_inv_hands()
+	. += body_overlay
+
 /obj/item/gun/ballistic/automatic/AM4B/AltClick(mob/living/user)
 	. = ..()
 	if(!in_range(src, user))	//Basic checks to prevent abuse

@@ -141,7 +141,7 @@
 		update_icon()
 
 /obj/machinery/disposal/proc/can_stuff_mob_in(mob/living/target, mob/living/user, pushing = FALSE)
-	if(!pushing && !iscarbon(user) && !user.ventcrawler) //only carbon and ventcrawlers can climb into disposal by themselves.
+	if(!pushing && !iscarbon(user) && !(SEND_SIGNAL(user, COMSIG_CHECK_VENTCRAWL))) //only carbon and ventcrawlers can climb into disposal by themselves.
 		if(iscyborg(user))
 			var/mob/living/silicon/robot/borg = user
 			if (!borg.module || !borg.module.canDispose)
@@ -263,7 +263,7 @@
 	. = ..()
 	if(.)
 		return
-	for(var/obj/item/I in src_object)
+	for(var/obj/item/I in src_object.contents())
 		if(user.active_storage != src_object)
 			if(I.on_found(user))
 				return

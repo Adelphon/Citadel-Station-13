@@ -2,7 +2,7 @@
 
 /datum/species/ethereal
 	name = "Ethereal"
-	id = "ethereal"
+	id = SPECIES_ETHEREAL
 	attack_verb = "burn"
 	attack_sound = 'sound/weapons/etherealhit.ogg'
 	miss_sound = 'sound/weapons/etherealmiss.ogg'
@@ -27,7 +27,7 @@
 	// Cold temperatures hurt faster as it is harder to move with out the heat energy
 	bodytemp_cold_damage_limit = (T20C - 10) // about 10c
 	*/
-	hair_color = "fixedmutcolor"
+	hair_color = "mutcolor"
 	hair_alpha = 140
 	var/current_color
 	var/EMPeffect = FALSE
@@ -84,11 +84,7 @@
 	EMPeffect = TRUE
 	spec_updatehealth(H)
 	to_chat(H, "<span class='notice'>You feel the light of your body leave you.</span>")
-	switch(severity)
-		if(EMP_LIGHT)
-			addtimer(CALLBACK(src, .proc/stop_emp, H), 10 SECONDS, TIMER_UNIQUE|TIMER_OVERRIDE) //We're out for 10 seconds
-		if(EMP_HEAVY)
-			addtimer(CALLBACK(src, .proc/stop_emp, H), 20 SECONDS, TIMER_UNIQUE|TIMER_OVERRIDE) //We're out for 20 seconds
+	addtimer(CALLBACK(src, .proc/stop_emp, H), (severity/5) SECONDS, TIMER_UNIQUE|TIMER_OVERRIDE) //lights out
 
 /datum/species/ethereal/proc/on_emag_act(mob/living/carbon/human/H, mob/user)
 	if(emageffect)

@@ -21,6 +21,9 @@ GLOBAL_VAR_INIT(hhmysteryRoomNumber, 1337)
 /obj/item/hilbertshotel/Initialize()
 	. = ..()
 	//Load templates
+	INVOKE_ASYNC(src, .proc/prepare_rooms)
+
+/obj/item/hilbertshotel/proc/prepare_rooms()
 	hotelRoomTemp = new()
 	hotelRoomTempEmpty = new()
 	hotelRoomTempLore = new()
@@ -182,6 +185,13 @@ GLOBAL_VAR_INIT(hhmysteryRoomNumber, 1337)
 /obj/item/hilbertshotel/ghostdojo/interact(mob/user)
 	. = ..()
 	promptAndCheckIn(user)
+
+/obj/item/hilbertshotel/ghostdojo/linkTurfs(datum/turf_reservation/currentReservation, currentRoomnumber)
+	. = ..()
+	var/area/hilbertshotel/currentArea = get_area(locate(currentReservation.bottom_left_coords[1], currentReservation.bottom_left_coords[2], currentReservation.bottom_left_coords[3]))
+	for(var/turf/closed/indestructible/hoteldoor/door in currentArea)
+		door.parentSphere = src
+		door.desc = "The door to this hotel room. Strange, this door doesnt even seem openable. The doorknob, however, seems to buzz with unusual energy...<br /><span class='info'>Alt-Click to look through the peephole.</span>"
 
 //Template Stuff
 /datum/map_template/hilbertshotel
